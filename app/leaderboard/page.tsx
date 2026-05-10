@@ -16,10 +16,19 @@ export default function LeaderboardPage() {
         .from("results")
         .select("*")
 
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("*")
+
       const resultMap: any = {}
+      const profileMap: any = {}
 
       results?.forEach((result) => {
         resultMap[result.match_id] = result
+      })
+
+      profiles?.forEach((profile) => {
+        profileMap[profile.email] = profile.username
       })
 
       const scores = predictions?.map((prediction) => {
@@ -50,6 +59,7 @@ export default function LeaderboardPage() {
 
         return {
           user_email: prediction.user_email,
+          username: profileMap[prediction.user_email] || prediction.user_email,
           punten,
         }
       }) || []
@@ -74,11 +84,11 @@ export default function LeaderboardPage() {
               className="grid grid-cols-[60px_1fr_80px] items-center px-5 py-4 border-b border-gray-800 last:border-b-0"
             >
               <div className="font-bold text-orange-400">
-                #{index + 1}
+                {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`}
               </div>
 
-              <div className="truncate">
-                {speler.user_email}
+              <div className="truncate font-semibold">
+                {speler.username}
               </div>
 
               <div className="text-right font-bold text-green-400">
