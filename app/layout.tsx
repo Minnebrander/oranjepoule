@@ -64,7 +64,14 @@ export default function RootLayout({
                 <span className="hidden sm:inline text-gray-300 text-sm max-w-[220px] truncate">
                   👋 {user}
                 </span>
-
+{user === "minne.brander@gmail.com" && (
+  <Link
+    href="/admin"
+    className="px-3 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold transition"
+  >
+    Admin
+  </Link>
+)}
                 <button
                   onClick={handleLogout}
                   className="px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-bold transition"

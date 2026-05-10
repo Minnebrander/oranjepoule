@@ -23,6 +23,24 @@ export default function LoginPage() {
     window.location.href = "/"
   }
 
+  const handlePasswordReset = async () => {
+    if (!email) {
+      alert("Vul eerst je emailadres in.")
+      return
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+
+    if (error) {
+      alert(error.message)
+      return
+    }
+
+    alert("We hebben een herstelmail gestuurd. Check je inbox 📩")
+  }
+
   return (
     <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800 rounded-3xl p-8 shadow-[0_0_40px_rgba(0,0,0,0.45)]">
@@ -82,10 +100,17 @@ export default function LoginPage() {
           </button>
 
           {showForgot && (
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-sm text-gray-300 text-center">
-              Momenteel werkt wachtwoordherstel nog niet automatisch.
-              <br />
-              Neem contact op met de beheerder 📩
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-sm text-gray-300 text-center space-y-3">
+              <p>
+                Vul hierboven je emailadres in en klik op onderstaande knop.
+              </p>
+
+              <button
+                onClick={handlePasswordReset}
+                className="w-full bg-gray-700 hover:bg-gray-600 transition p-3 rounded-xl font-bold text-white"
+              >
+                Herstelmail versturen 📩
+              </button>
             </div>
           )}
 
