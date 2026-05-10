@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase"
 import Link from "next/link"
 
 export default function RegisterPage() {
+  const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [repeatPassword, setRepeatPassword] = useState("")
@@ -15,6 +16,11 @@ export default function RegisterPage() {
       return
     }
 
+    if (username.length < 3) {
+      alert("Gebruikersnaam moet minimaal 3 tekens zijn")
+      return
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -22,6 +28,20 @@ export default function RegisterPage() {
 
     if (error) {
       alert(error.message)
+      return
+    }
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .insert([
+        {
+          email,
+          username,
+        },
+      ])
+
+    if (profileError) {
+      alert(profileError.message)
       return
     }
 
@@ -46,6 +66,14 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-4">
+
+          <input
+            type="text"
+            placeholder="Gebruikersnaam"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
 
           <input
             type="email"
