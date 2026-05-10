@@ -1,11 +1,19 @@
 "use client"
 
+import Link from "next/link"
+
 export default function UitlegPage() {
   return (
     <main className="min-h-screen bg-gray-950 text-white px-4 py-10">
       <div className="max-w-4xl mx-auto">
 
-        <div className="text-center mb-10">
+  <Link href="/voorspellen">
+    <button className="mb-6 bg-gray-800 hover:bg-gray-700 transition px-4 py-2 rounded-xl font-semibold">
+      ← Terug naar voorspellen
+    </button>
+  </Link>
+
+  <div className="text-center mb-10">
           <div className="text-6xl mb-4">⚽</div>
           <h1 className="text-4xl font-extrabold mb-3 tracking-tight">
             Hoe werkt Oranjepoule?

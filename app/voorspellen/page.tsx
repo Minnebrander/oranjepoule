@@ -1866,6 +1866,14 @@ const leaderboard = useMemo(() => getLeaderboard(), [
   : `Voorspellingen zijn nog open ✅ Nog ${getTijdTotDeadline()}`}
 </div>
 
+<div className="text-center mt-4 mb-6">
+  <Link href="/leaderboard">
+    <button className="bg-orange-500 hover:bg-orange-600 transition px-6 py-3 rounded-xl font-bold">
+      Bekijk leaderboard 🏆
+    </button>
+  </Link>
+</div>
+
   <div className="w-full max-w-4xl mt-6">
   <h2 className="text-3xl font-extrabold text-center mb-6 tracking-tight text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]">
   Groepsfase
@@ -2314,14 +2322,6 @@ const leaderboard = useMemo(() => getLeaderboard(), [
       </select>
     </div>
   </div>
-</div>
-
-<div className="text-center mt-12 mb-10">
-  <Link href="/leaderboard">
-    <button className="bg-orange-500 hover:bg-orange-600 transition px-6 py-3 rounded-xl font-bold">
-      Bekijk leaderboard 🏆
-    </button>
-  </Link>
 </div>
 
 {geselecteerdeSpeler && geselecteerdeVoorspelling && (
