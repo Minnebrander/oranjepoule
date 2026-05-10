@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 import { getBesteDerdeCombinatieKey, getDerdePouleVoorDuel } from "@/lib/ThirdPlaceMatrix"
 import { useState, useEffect, useMemo } from "react"
@@ -2315,69 +2316,14 @@ const leaderboard = useMemo(() => getLeaderboard(), [
   </div>
 </div>
 
-<div className="mt-8 w-full max-w-4xl mx-auto mb-16">
-  <h3 className="text-3xl font-extrabold text-center mb-6 tracking-tight text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.08)]">
-  Leaderboard 🏆
-</h3>
-
-  <div className="bg-gradient-to-b from-gray-800 to-gray-900 border border-gray-700 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.25)]">
-    {leaderboard.map((speler, index) => (
-      <button
-  key={speler.naam}
-  onClick={() => setGeselecteerdeSpeler(speler.naam)}
-  className={`w-full grid grid-cols-[40px_minmax(0,1fr)_60px] items-center px-4 py-3 border-b border-gray-700 last:border-b-0 transition-all duration-200 text-left hover:scale-[1.01] ${
-  index === 0
-    ? "bg-yellow-500/10 ring-1 ring-yellow-500/30 shadow-[0_0_14px_rgba(234,179,8,0.25)]"
-    : index === 1
-    ? "bg-gray-300/10 ring-1 ring-gray-400/20 shadow-[0_0_12px_rgba(200,200,200,0.18)]"
-    : index === 2
-    ? "bg-orange-500/10 ring-1 ring-orange-500/30 shadow-[0_0_12px_rgba(249,115,22,0.22)]"
-    : "hover:bg-gray-700/40"
-} ${
-  speler.naam === user ? "ring-1 ring-green-500" : ""
-}`}
-      >
-        <span
-          className={`font-semibold text-lg ${
-            index === 0
-              ? "text-yellow-400"
-              : index === 1
-              ? "text-gray-300"
-              : index === 2
-              ? "text-orange-300"
-              : "text-gray-400"
-          }`}
-        >
-          {getRankIcon(index)}
-        </span>
-
-        <span
-  className={`font-medium truncate ${
-            speler.naam === user ? "text-white" : "text-gray-100"
-          }`}
-        >
-          {speler.naam}
-        </span>
-
-        <span
-          className={`text-right font-semibold ${
-            index === 0
-              ? "text-yellow-400"
-              : index === 1
-              ? "text-gray-200"
-              : index === 2
-              ? "text-orange-300"
-              : speler.naam === user
-              ? "text-green-400"
-              : "text-orange-400"
-          }`}
-        >
-          {speler.punten} pt
-        </span>
-      </button>
-    ))}
-  </div>
+<div className="text-center mt-12 mb-10">
+  <Link href="/leaderboard">
+    <button className="bg-orange-500 hover:bg-orange-600 transition px-6 py-3 rounded-xl font-bold">
+      Bekijk leaderboard 🏆
+    </button>
+  </Link>
 </div>
+
 {geselecteerdeSpeler && geselecteerdeVoorspelling && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
     <div className="w-full max-w-5xl rounded-2xl bg-gray-900 border border-gray-700 p-6 max-h-[85vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
