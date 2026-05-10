@@ -6,7 +6,7 @@ import { getBesteDerdeCombinatieKey, getDerdePouleVoorDuel } from "@/lib/ThirdPl
 import { useState, useEffect, useMemo } from "react"
 import { poules, teamsPerPoule } from "@/lib/poules"
 
-const voorspelDeadline = new Date("2026-06-11T21:00:00")
+const voorspelDeadline = new Date("2026-06-11T21:00:00+02:00")
 
 const alleLanden = Object.values(teamsPerPoule)
   .flat()
@@ -181,7 +181,7 @@ export default function VoorspellenPage() {
 const [scores, setScores] = useState<{ [key: string]: { s1?: string; s2?: string } }>({})
 const [user, setUser] = useState("Jij")
 const [geselecteerdeSpeler, setGeselecteerdeSpeler] = useState<string | null>(null)
-const voorspellingenGesloten = new Date() > voorspelDeadline
+const voorspellingenGesloten = Date.now() > voorspelDeadline.getTime()
 const [extraVoorspellingen, setExtraVoorspellingen] = useState<{
   geleKaarten?: string
   rodeKaarten?: string
@@ -391,6 +391,10 @@ const savePredictionToSupabase = async (
   updatedKnockout: any,
   updatedExtra: any
 ) => {
+  if (Date.now() > voorspelDeadline.getTime()) {
+  alert("De deadline is verstreken. Je voorspelling is niet opgeslagen.")
+  return
+}
   const {
     data: { user },
   } = await supabase.auth.getUser()
