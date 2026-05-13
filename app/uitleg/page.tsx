@@ -72,20 +72,25 @@ export default function UitlegPage() {
 
               <div className="space-y-3 mb-6">
                 {[
-                  ["Laatste 32 correct", "10 pt"],
-                  ["Laatste 16 correct", "15 pt"],
-                  ["Kwartfinale correct", "20 pt"],
-                  ["Halve finale correct", "25 pt"],
-                  ["Troostfinale correct", "30 pt"],
-                  ["Finale correct", "30 pt"],
-                  ["Wereldkampioen correct", "60 pt 👑"],
-                ].map(([label, points]) => (
+  ["Team correct in laatste 32", "10 pt"],
+  ["Team correct in laatste 16", "15 pt"],
+  ["Team correct in kwartfinale", "20 pt"],
+  ["Team correct in halve finale", "25 pt"],
+  ["Finalist correct", "30 pt"],
+  ["Wereldkampioen correct", "60 pt 👑"],
+  ["Winnaar troostfinale correct", "30 pt"],
+].map(([label, points]) => (
                   <div key={label} className="flex justify-between">
                     <span>{label}</span>
                     <span className="text-orange-400 font-bold">{points}</span>
                   </div>
                 ))}
               </div>
+
+<p className="text-sm text-gray-400 leading-relaxed mb-6">
+  Let op: je krijgt punten als je een team correct in een ronde voorspelt.
+  De exacte plek van dat team in het bracket maakt niet uit.
+</p>
 
               <h3 className="text-xl font-bold mb-4 text-white">
                 Extra voorspellingen 🎯

@@ -18,71 +18,6 @@ const SectionDivider = () => (
   </div>
 )
 
-const echtePouleStanden: Record<string, string[]> = {
-  A: [],
-  B: [],
-  C: [],
-  D: [],
-  E: [],
-  F: [],
-  G: [],
-  H: [],
-  I: [],
-  J: [],
-  K: [],
-  L: [],
-}
-
-const echteKnockoutWinners: Record<number, string> = {
-  73: "",
-  74: "",
-  75: "",
-  76: "",
-  77: "",
-  78: "",
-  79: "",
-  80: "",
-  81: "",
-  82: "",
-  83: "",
-  84: "",
-  85: "",
-  86: "",
-  87: "",
-  88: "",
-
-  89: "",
-  90: "",
-  91: "",
-  92: "",
-  93: "",
-  94: "",
-  95: "",
-  96: "",
-
-  97: "",
-  98: "",
-  99: "",
-  100: "",
-
-  101: "",
-  102: "",
-
-  103: "",
-  104: "",
-}
-
-const echteExtraVoorspellingen = {
-  geleKaarten: "",
-  rodeKaarten: "",
-  totaalDoelpunten: "",
-  doelpuntenNederland: "",
-  topscorerNederland: "",
-  topscorerToernooi: "",
-  meesteTegengoalsLand: "",
-  meesteGoalsLand: "",
-}
-
 
 const countryCodes: Record<string, string> = {
   // GROEP A
@@ -179,6 +114,9 @@ const getWedstrijdKey = (pouleKey: string, index: number) => {
 
 export default function VoorspellenPage() {
 const [scores, setScores] = useState<{ [key: string]: { s1?: string; s2?: string } }>({})
+const [results, setResults] = useState<
+  Record<string, { score1: number; score2: number }>
+>({})
 const [user, setUser] = useState("Jij")
 const [geselecteerdeSpeler, setGeselecteerdeSpeler] = useState<string | null>(null)
 const voorspellingenGesloten = Date.now() > voorspelDeadline.getTime()
@@ -192,6 +130,23 @@ const [extraVoorspellingen, setExtraVoorspellingen] = useState<{
   meesteTegengoalsLand?: string
   meesteGoalsLand?: string
 }>({})
+
+const [echtePouleStanden, setEchtePouleStanden] =
+  useState<Record<string, string[]>>({
+    A: [],
+    B: [],
+    C: [],
+    D: [],
+    E: [],
+    F: [],
+    G: [],
+    H: [],
+    I: [],
+    J: [],
+    K: [],
+    L: [],
+  })
+const [echteKnockoutRondes, setEchteKnockoutRondes] = useState<Record<string, string[]>>({})
 
 const [alleVoorspellingen, setAlleVoorspellingen] = useState<
   Record<
@@ -214,7 +169,8 @@ const [alleVoorspellingen, setAlleVoorspellingen] = useState<
 >({})
 
 const [saving, setSaving] = useState(false)
-
+const [profielGeladen, setProfielGeladen] = useState(false)
+const [heeftBetaald, setHeeftBetaald] = useState(false)
 const geselecteerdeVoorspelling = geselecteerdeSpeler
   ? alleVoorspellingen[geselecteerdeSpeler]
   : null
@@ -231,8 +187,29 @@ const geselecteerdeVoorspelling = geselecteerdeSpeler
   window.location.href = "/login"
   return
 }
+const { data: resultsData } = await supabase
+  .from("results")
+  .select("*")
 
-    setUser(user.email)
+const resultMap: Record<string, { score1: number; score2: number }> = {}
+
+resultsData?.forEach((result) => {
+  resultMap[result.match_id] = {
+    score1: Number(result.score1),
+    score2: Number(result.score2),
+  }
+})
+
+setResults(resultMap)
+    const { data: mijnProfiel } = await supabase
+  .from("profiles")
+  .select("username, paid")
+  .eq("email", user.email)
+  .single()
+
+setUser(mijnProfiel?.username || user.email)
+setHeeftBetaald(mijnProfiel?.paid === true)
+setProfielGeladen(true)
 
     const { data } = await supabase
       .from("predictions")
@@ -250,10 +227,22 @@ const geselecteerdeVoorspelling = geselecteerdeSpeler
   .from("predictions")
   .select("*")
 
+const { data: profilesData } = await supabase
+  .from("profiles")
+  .select("email, username")
+
+const usernameByEmail: Record<string, string> = {}
+
+profilesData?.forEach((profile) => {
+  usernameByEmail[profile.email] = profile.username || profile.email
+})
+
 const voorspellingenUitDatabase: any = {}
 
 alleData?.forEach((rij) => {
-  voorspellingenUitDatabase[rij.user_email] = {
+  const naam = usernameByEmail[rij.user_email] || rij.user_email
+
+  voorspellingenUitDatabase[naam] = {
     scores: rij.scores || {},
     knockoutWinners: rij.knockout || {},
     extraVoorspellingen: rij.extra || {},
@@ -265,12 +254,70 @@ setAlleVoorspellingen(voorspellingenUitDatabase)
 
   loadPredictions()
 }, [])
+useEffect(() => {
+  const loadActuals = async () => {
+    const { data, error } = await supabase
+      .from("actuals")
+      .select("key, value")
+
+    if (error) {
+      console.error("Actuals laden mislukt:", error.message)
+      return
+    }
+
+  const extraActuals: typeof echteExtraVoorspellingen = {}
+const echtePouleStandenData: Record<string, string[]> = {}
+const knockoutRondesData: Record<string, string[]> = {}
+
+    data?.forEach((row) => {
+     if (row.key.startsWith("extra-")) {
+  const veld = row.key.replace("extra-", "") as keyof typeof extraActuals
+  extraActuals[veld] = row.value
+}
+if (row.key.startsWith("ronde-")) {
+  try {
+    knockoutRondesData[row.key] = JSON.parse(row.value)
+  } catch {
+    knockoutRondesData[row.key] = []
+  }
+}
+if (row.key.startsWith("stand-")) {
+  const poule = row.key.replace("stand-", "")
+
+  try {
+    echtePouleStandenData[poule] = JSON.parse(row.value)
+  } catch (e) {
+    console.error("Fout bij parsen poulestand:", row.value)
+  }
+}
+
+    })
+
+setEchteExtraVoorspellingen(extraActuals)
+setEchtePouleStanden(echtePouleStandenData)
+setEchteKnockoutRondes(knockoutRondesData)
+  }
+
+  loadActuals()
+}, [])
+const [echteKnockoutWinners, setEchteKnockoutWinners] =
+  useState<Record<number, string>>({})
+const [echteExtraVoorspellingen, setEchteExtraVoorspellingen] = useState<{
+  geleKaarten?: string
+  rodeKaarten?: string
+  totaalDoelpunten?: string
+  doelpuntenNederland?: string
+  topscorerNederland?: string
+  topscorerToernooi?: string
+  meesteTegengoalsLand?: string
+  meesteGoalsLand?: string
+}>({})
 const [knockoutWinners, setKnockoutWinners] = useState<Record<number, string>>({})
 const getKnockoutPuntenVoorDuel = (duelNummer: number) => {
   if (duelNummer >= 73 && duelNummer <= 88) return 10
   if (duelNummer >= 89 && duelNummer <= 96) return 15
   if (duelNummer >= 97 && duelNummer <= 100) return 20
-  if (duelNummer >= 101 && duelNummer <= 102) return 25
+  if (duelNummer >= 101 && duelNummer <= 102) return 30
   if (duelNummer === 103) return 30
   if (duelNummer === 104) return 30
   return 0
@@ -517,12 +564,7 @@ const berekenKnockoutPunten = () => {
 }
 
 const berekenWereldkampioenBonus = () => {
-  const echteWereldkampioen = echteKnockoutWinners[104]
-  const voorspeldeWereldkampioen = knockoutWinners[104]
-
-  if (!echteWereldkampioen || !voorspeldeWereldkampioen) return 0
-
-  return voorspeldeWereldkampioen === echteWereldkampioen ? 60 : 0
+  return 0
 }
 
 const berekenExtraVoorspellingPunten = (
@@ -629,12 +671,6 @@ const getLeaderboard = () => {
   ),
 }))
 
-  if (user && !spelers.find((speler) => speler.naam === user)) {
-    spelers.push({
-  naam: user,
-  punten: berekenPuntenVoorScores(scores, knockoutWinners, extraVoorspellingen),
-})
-  }
 
   return spelers.sort((a, b) => b.punten - a.punten)
 }
@@ -644,32 +680,85 @@ const getRankIcon = (index: number) => {
   if (index === 2) return "🥉"
   return `#${index + 1}`
 }
+  const getTeamsUitDuelRange = (
+  winners: Record<number, string>,
+  start: number,
+  end: number
+) => {
+  return Object.entries(winners)
+    .filter(([duel]) => {
+      const nummer = Number(duel)
+      return nummer >= start && nummer <= end
+    })
+    .map(([, team]) => team)
+    .filter(Boolean)
+}
+
+const telRondePunten = (
+  voorspeldeTeams: string[],
+  echteTeams: string[],
+  puntenPerTeam: number
+) => {
+  const echteSet = new Set(echteTeams)
+  const uniekeVoorspeldeTeams = Array.from(new Set(voorspeldeTeams))
+
+  return uniekeVoorspeldeTeams.reduce((totaal, team) => {
+    return totaal + (echteSet.has(team) ? puntenPerTeam : 0)
+  }, 0)
+}
+
+
 const berekenKnockoutPuntenVoorSpeler = (
-  userKnockoutWinners: Record<number, string>
+  userKnockoutWinners: Record<number, string>,
+  userScores: { [key: string]: { s1?: string; s2?: string } } = {}
 ) => {
   let punten = 0
 
-  Object.entries(echteKnockoutWinners).forEach(([duelKey, echteWinnaar]) => {
-    if (!echteWinnaar) return
+  const voorspeldeLaatste32 = getLaatste32VoorSpeler(userScores)
+  .flatMap((duel) => [duel.home, duel.away])
+  .filter(Boolean) as string[]
 
-    const duelNummer = Number(duelKey)
-    const voorspeldeWinnaar = userKnockoutWinners[duelNummer]
+punten += telRondePunten(
+  voorspeldeLaatste32,
+  echteKnockoutRondes["ronde-laatste32"] || [],
+  10
+)
 
-    if (voorspeldeWinnaar && voorspeldeWinnaar === echteWinnaar) {
-      punten += getKnockoutPuntenVoorDuel(duelNummer)
-    }
-  })
+  punten += telRondePunten(
+    Object.values(userKnockoutWinners || {}),
+    echteKnockoutRondes["ronde-laatste16"] || [],
+    15
+  )
 
-  const echteWereldkampioen = echteKnockoutWinners[104]
-  const voorspeldeWereldkampioen = userKnockoutWinners[104]
+  punten += telRondePunten(
+    Object.values(userKnockoutWinners || {}),
+    echteKnockoutRondes["ronde-kwartfinale"] || [],
+    20
+  )
 
-  if (
-    echteWereldkampioen &&
-    voorspeldeWereldkampioen &&
-    echteWereldkampioen === voorspeldeWereldkampioen
-  ) {
-    punten += 60
-  }
+  punten += telRondePunten(
+    Object.values(userKnockoutWinners || {}),
+    echteKnockoutRondes["ronde-halvefinale"] || [],
+    25
+  )
+
+  punten += telRondePunten(
+    Object.values(userKnockoutWinners || {}),
+    echteKnockoutRondes["ronde-finalisten"] || [],
+    30
+  )
+
+  punten += telRondePunten(
+    Object.values(userKnockoutWinners || {}),
+    echteKnockoutRondes["ronde-wereldkampioen"] || [],
+    30
+  )
+
+  punten += telRondePunten(
+    Object.values(userKnockoutWinners || {}),
+    echteKnockoutRondes["ronde-troostwinnaar"] || [],
+    30
+  )
 
   return punten
 }
@@ -690,133 +779,57 @@ const berekenPuntenVoorScores = (
 ) => {
   let punten = 0
 
-  Object.entries(poules).forEach(([pouleKey, wedstrijden]) => {
-    wedstrijden.forEach((w, i) => {
-      const key = getWedstrijdKey(pouleKey, i)
-      const voorspelling = userScores[key]
+  Object.entries(userScores || {}).forEach(([matchId, voorspelling]) => {
+    const result = results[matchId]
 
-      if (!voorspelling) return
-      if (w.score1 == null || w.score2 == null) return
+    if (!result) return
 
-      const s1 = parseInt(voorspelling.s1 || "0")
-      const s2 = parseInt(voorspelling.s2 || "0")
+    const voorspeldeS1 = Number(voorspelling.s1)
+    const voorspeldeS2 = Number(voorspelling.s2)
+    const echteS1 = Number(result.score1)
+    const echteS2 = Number(result.score2)
 
-      const echte =
-        w.score1 > w.score2 ? "1" :
-        w.score1 < w.score2 ? "2" : "X"
+    const voorspeldeUitkomst =
+      voorspeldeS1 > voorspeldeS2 ? "1" :
+      voorspeldeS1 < voorspeldeS2 ? "2" : "X"
 
-      const voorspeld =
-        s1 > s2 ? "1" :
-        s1 < s2 ? "2" : "X"
+    const echteUitkomst =
+      echteS1 > echteS2 ? "1" :
+      echteS1 < echteS2 ? "2" : "X"
 
-      if (echte === voorspeld) {
-        punten += 4
-      }
-
-      if (s1 === w.score1) {
-        punten += 2
-      }
-
-      if (s2 === w.score2) {
-        punten += 2
-      }
-
-      if (s1 === w.score1 && s2 === w.score2) {
-        punten += 2
-      }
-    })
+    if (voorspeldeUitkomst === echteUitkomst) punten += 4
+    if (voorspeldeS1 === echteS1) punten += 2
+    if (voorspeldeS2 === echteS2) punten += 2
+    if (voorspeldeS1 === echteS1 && voorspeldeS2 === echteS2) punten += 2
   })
 
-  const berekenPouleStandVoorScores = (pouleKey: string) => {
-    const wedstrijden = poules[pouleKey as keyof typeof poules]
-    const teams = teamsPerPoule[pouleKey as keyof typeof teamsPerPoule]
-
-    const stand = teams.map((land) => ({
-      land,
-      gespeeld: 0,
-      winst: 0,
-      gelijk: 0,
-      verlies: 0,
-      voor: 0,
-      tegen: 0,
-      saldo: 0,
-      punten: 0,
-    }))
-
-    wedstrijden.forEach((w, i) => {
-      const key = getWedstrijdKey(pouleKey, i)
-      const voorspelling = userScores[key]
-
-      if (!voorspelling) return
-      if (voorspelling.s1 == null || voorspelling.s2 == null) return
-      if (voorspelling.s1 === "" || voorspelling.s2 === "") return
-
-      const s1 = parseInt(voorspelling.s1 || "0")
-      const s2 = parseInt(voorspelling.s2 || "0")
-
-      const team1 = stand.find((t) => t.land === w.team1)
-      const team2 = stand.find((t) => t.land === w.team2)
-
-      if (!team1 || !team2) return
-
-      team1.gespeeld += 1
-      team2.gespeeld += 1
-
-      team1.voor += s1
-      team1.tegen += s2
-      team2.voor += s2
-      team2.tegen += s1
-
-      if (s1 > s2) {
-        team1.winst += 1
-        team2.verlies += 1
-        team1.punten += 3
-      } else if (s1 < s2) {
-        team2.winst += 1
-        team1.verlies += 1
-        team2.punten += 3
-      } else {
-        team1.gelijk += 1
-        team2.gelijk += 1
-        team1.punten += 1
-        team2.punten += 1
-      }
-    })
-
-    stand.forEach((team) => {
-      team.saldo = team.voor - team.tegen
-    })
-
-    return stand.sort((a, b) => {
-      if (b.punten !== a.punten) return b.punten - a.punten
-      if (b.saldo !== a.saldo) return b.saldo - a.saldo
-      return b.voor - a.voor
-    })
-  }
-
-  const berekenPoulePuntenVoorScores = (pouleKey: string) => {
-    const voorspeldeStand = berekenPouleStandVoorScores(pouleKey)
-    const echteStand = echtePouleStanden[pouleKey] || []
-
-  let poulePunten = 0
-
-voorspeldeStand.forEach((team, index) => {
-  if (team.land === echteStand[index]) {
-    poulePunten += 3
-  }
-})
-
-return poulePunten  
-}
   const pouleStandPunten = Object.keys(poules).reduce((totaal, pouleKey) => {
-    return totaal + berekenPoulePuntenVoorScores(pouleKey)
+    return totaal + berekenPoulePuntenVoorScores(userScores, pouleKey)
   }, 0)
 
   punten += pouleStandPunten
-punten += berekenKnockoutPuntenVoorSpeler(userKnockoutWinners)
-punten += berekenExtraVoorspellingPunten(userExtraVoorspellingen)
+  punten += berekenKnockoutPuntenVoorSpeler(userKnockoutWinners, userScores)
+  punten += berekenExtraVoorspellingPunten(userExtraVoorspellingen)
 
-return punten
+  return punten
+}
+
+const berekenPoulePuntenVoorScores = (
+  userScores: { [key: string]: { s1?: string; s2?: string } },
+  pouleKey: string
+) => {
+  const voorspeldeStand = berekenPouleStandVoorSpeler(pouleKey, userScores)
+  const echteStand = echtePouleStanden[pouleKey] || []
+
+  let punten = 0
+
+  voorspeldeStand.forEach((team, index) => {
+    if (team.land === echteStand[index]) {
+      punten += 3
+    }
+  })
+
+  return punten
 }
 const berekenPouleStand = (pouleKey: string) => {
   const wedstrijden = poules[pouleKey as keyof typeof poules]
@@ -1006,7 +1019,7 @@ const berekenPuntenUitsplitsingVoorSpeler = (
     })
   })
 
-  const knockoutPunten = berekenKnockoutPuntenVoorSpeler(userKnockoutWinners)
+  const knockoutPunten = berekenKnockoutPuntenVoorSpeler(userKnockoutWinners, userScores)
   const extraPunten = berekenExtraVoorspellingPunten(userExtraVoorspellingen)
 
   return {
@@ -1841,7 +1854,64 @@ const leaderboard = useMemo(() => getLeaderboard(), [
   user,
   scores,
   knockoutWinners,
+  extraVoorspellingen,
+  echteKnockoutRondes,
+  echteKnockoutWinners,
+  echteExtraVoorspellingen,
+  echtePouleStanden,
+  results,
 ])
+if (!profielGeladen) {
+  return (
+    <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-6">
+      <div className="text-center text-gray-300">
+        Laden...
+      </div>
+    </main>
+  )
+}
+
+if (!heeftBetaald) {
+  return (
+    <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-6">
+      <div className="max-w-md w-full bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800 rounded-3xl p-8 text-center shadow-[0_0_30px_rgba(0,0,0,0.35)]">
+        <div className="text-5xl mb-4">💳</div>
+
+        <h1 className="text-3xl font-extrabold mb-3">
+          Betaal je deelname
+        </h1>
+
+        <p className="text-gray-400 mb-6 leading-relaxed">
+          Deelname aan Oranjepoule kost €15. Na betaling zet de beheerder je toegang open en kun je jouw voorspellingen invullen.
+        </p>
+
+        <a
+          href="https://www.ing.nl/payreq/m/?trxid=SaN3nzVF5BK8P90jxHVt7bWPfRdSOkhq"
+
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full bg-orange-500 hover:bg-orange-600 transition rounded-xl px-6 py-3 font-bold mb-4"
+        >
+          Betaal €15 via iDEAL
+        </a>
+
+        <div className="text-sm text-orange-200 leading-relaxed space-y-2 bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
+  <p>
+    Na betaling:
+  </p>
+
+  <p>
+    1. stuur je username via WhatsApp naar <span className="text-white font-semibold">06-25279139</span>
+  </p>
+
+  <p>
+    2. je account wordt daarna handmatig geactiveerd ✅
+  </p>
+</div>
+      </div>
+    </main>
+  )
+}
   return (
     <main className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-start pt-24 px-6">
       
@@ -1876,6 +1946,49 @@ const leaderboard = useMemo(() => getLeaderboard(), [
       Bekijk leaderboard 🏆
     </button>
   </Link>
+</div>
+
+<div className="mt-4 mb-8 w-full max-w-4xl">
+  <h2 className="text-xl font-bold mb-3 text-center">
+    Rond jouw positie 👀
+  </h2>
+
+  <div className="grid gap-2">
+    {(() => {
+      const mijnIndex = leaderboard.findIndex((speler) => speler.naam === user)
+
+      const start = Math.max(0, mijnIndex - 5)
+      const end = Math.min(leaderboard.length, mijnIndex + 6)
+
+      return leaderboard.slice(start, end).map((speler, index) => {
+        const echteIndex = start + index
+        const isMe = speler.naam === user
+
+        return (
+          <button
+            key={speler.naam}
+            onClick={() => setGeselecteerdeSpeler(speler.naam)}
+            className={`w-full rounded-xl border px-4 py-3 text-left transition ${
+              isMe
+                ? "bg-orange-500/20 border-orange-500"
+                : "bg-gray-800 hover:bg-gray-700 border-gray-700"
+            }`}
+          >
+            <div className="flex items-center justify-between gap-4">
+              <span className="truncate">
+                #{echteIndex + 1} {speler.naam}
+                {isMe ? " jij" : ""}
+              </span>
+
+              <span className="text-orange-400 font-bold whitespace-nowrap">
+                {speler.punten} pt
+              </span>
+            </div>
+          </button>
+        )
+      })
+    })()}
+  </div>
 </div>
 
   <div className="w-full max-w-4xl mt-6">
@@ -2055,7 +2168,11 @@ const leaderboard = useMemo(() => getLeaderboard(), [
   {stand.map((team, index) => (
     <div key={team.land}>
       {/* DESKTOP */}
-      <div className="hidden md:grid grid-cols-[40px_1fr_40px_40px_40px_40px_50px_50px_50px] px-4 py-3 border-b border-gray-700 last:border-b-0">
+      <div
+  className={`hidden md:grid grid-cols-[40px_1fr_40px_40px_40px_40px_50px_50px_50px] px-4 py-3 border-b border-gray-700 last:border-b-0 ${
+    getPouleVergelijkKleur(pouleKey, team.land, index)
+  }`}
+>
         <span className="font-semibold text-gray-300">{index + 1}</span>
         <span>{team.land}</span>
         <span>{team.gespeeld}</span>
@@ -2068,7 +2185,11 @@ const leaderboard = useMemo(() => getLeaderboard(), [
       </div>
 
       {/* MOBILE */}
-      <div className="grid md:hidden grid-cols-[36px_minmax(0,1fr)_50px] px-4 py-3 border-b border-gray-700 last:border-b-0">
+    <div
+  className={`grid md:hidden grid-cols-[36px_minmax(0,1fr)_50px] px-4 py-3 border-b border-gray-700 last:border-b-0 ${
+    getPouleVergelijkKleur(pouleKey, team.land, index)
+  }`}
+>
         <span className="font-semibold text-gray-300">{index + 1}</span>
 
         <span className="truncate">
