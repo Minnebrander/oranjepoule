@@ -1334,33 +1334,35 @@ const getWinnaarVanDuelVoorSpeler = (
   return userKnockoutWinners[duelNummer] || null
 }
 const knockoutDependencies: Record<number, number[]> = {
-  73: [89, 97, 101, 103, 104],
-  74: [89, 97, 101, 103, 104],
+  73: [90, 97, 101, 103, 104],
   75: [90, 97, 101, 103, 104],
-  76: [90, 97, 101, 103, 104],
+  74: [89, 97, 101, 103, 104],
+  77: [89, 97, 101, 103, 104],
 
-  77: [91, 98, 101, 103, 104],
-  78: [91, 98, 101, 103, 104],
-  79: [92, 98, 101, 103, 104],
-  80: [92, 98, 101, 103, 104],
+  76: [91, 99, 102, 103, 104],
+  78: [91, 99, 102, 103, 104],
+  79: [92, 99, 102, 103, 104],
+  80: [92, 99, 102, 103, 104],
 
-  81: [93, 99, 102, 103, 104],
-  82: [93, 99, 102, 103, 104],
-  83: [94, 99, 102, 103, 104],
-  84: [94, 99, 102, 103, 104],
+  83: [93, 98, 101, 103, 104],
+  84: [93, 98, 101, 103, 104],
+  81: [94, 98, 101, 103, 104],
+  82: [94, 98, 101, 103, 104],
 
-  85: [95, 100, 102, 103, 104],
   86: [95, 100, 102, 103, 104],
+  88: [95, 100, 102, 103, 104],
+  85: [96, 100, 102, 103, 104],
   87: [96, 100, 102, 103, 104],
-  88: [96, 100, 102, 103, 104],
 
   89: [97, 101, 103, 104],
   90: [97, 101, 103, 104],
-  91: [98, 101, 103, 104],
-  92: [98, 101, 103, 104],
 
-  93: [99, 102, 103, 104],
-  94: [99, 102, 103, 104],
+  93: [98, 101, 103, 104],
+  94: [98, 101, 103, 104],
+
+  91: [99, 102, 103, 104],
+  92: [99, 102, 103, 104],
+
   95: [100, 102, 103, 104],
   96: [100, 102, 103, 104],
 
@@ -1415,68 +1417,68 @@ savePredictionToSupabase(
 const getLaatste16 = () => {
   return [
     {
-      duel: 89,
-      datum: "5-7",
-      tijd: "18:00",
-      stadion: "Philadelphia",
+      duel: 90,
+      datum: "4-7",
+      tijd: "19:00",
+      stadion: "Houston",
       home: getWinnaarVanDuel(73),
-      away: getWinnaarVanDuel(74),
+      away: getWinnaarVanDuel(75),
     },
     {
-      duel: 90,
-      datum: "5-7",
-      tijd: "22:00",
-      stadion: "Houston",
-      home: getWinnaarVanDuel(75),
-      away: getWinnaarVanDuel(76),
+      duel: 89,
+      datum: "4-7",
+      tijd: "23:00",
+      stadion: "Philadelphia",
+      home: getWinnaarVanDuel(74),
+      away: getWinnaarVanDuel(77),
     },
     {
       duel: 91,
-      datum: "6-7",
-      tijd: "18:00",
-      stadion: "Atlanta",
-      home: getWinnaarVanDuel(77),
+      datum: "5-7",
+      tijd: "22:00",
+      stadion: "New York/New Jersey",
+      home: getWinnaarVanDuel(76),
       away: getWinnaarVanDuel(78),
     },
     {
       duel: 92,
       datum: "6-7",
-      tijd: "22:00",
-      stadion: "Seattle",
+      tijd: "02:00",
+      stadion: "Mexico-Stad",
       home: getWinnaarVanDuel(79),
       away: getWinnaarVanDuel(80),
     },
     {
       duel: 93,
-      datum: "7-7",
-      tijd: "18:00",
-      stadion: "Boston",
-      home: getWinnaarVanDuel(81),
-      away: getWinnaarVanDuel(82),
-    },
-    {
-      duel: 94,
-      datum: "7-7",
-      tijd: "22:00",
+      datum: "6-7",
+      tijd: "21:00",
       stadion: "Dallas",
       home: getWinnaarVanDuel(83),
       away: getWinnaarVanDuel(84),
     },
     {
+      duel: 94,
+      datum: "7-7",
+      tijd: "02:00",
+      stadion: "Seattle",
+      home: getWinnaarVanDuel(81),
+      away: getWinnaarVanDuel(82),
+    },
+    {
       duel: 95,
-      datum: "8-7",
+      datum: "7-7",
       tijd: "18:00",
-      stadion: "Los Angeles",
-      home: getWinnaarVanDuel(85),
-      away: getWinnaarVanDuel(86),
+      stadion: "Atlanta",
+      home: getWinnaarVanDuel(86),
+      away: getWinnaarVanDuel(88),
     },
     {
       duel: 96,
-      datum: "8-7",
+      datum: "7-7",
       tijd: "22:00",
-      stadion: "Mexico-Stad",
-      home: getWinnaarVanDuel(87),
-      away: getWinnaarVanDuel(88),
+      stadion: "Vancouver",
+      home: getWinnaarVanDuel(85),
+      away: getWinnaarVanDuel(87),
     },
   ]
 }
@@ -1484,14 +1486,14 @@ const getLaatste16VoorSpeler = (
   userKnockoutWinners: Record<number, string>
 ) => {
   return [
-    { duel: 89, datum: "5-7", tijd: "18:00", stadion: "Philadelphia", home: getWinnaarVanDuelVoorSpeler(73, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(74, userKnockoutWinners) },
-    { duel: 90, datum: "5-7", tijd: "22:00", stadion: "Houston", home: getWinnaarVanDuelVoorSpeler(75, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(76, userKnockoutWinners) },
-    { duel: 91, datum: "6-7", tijd: "18:00", stadion: "Atlanta", home: getWinnaarVanDuelVoorSpeler(77, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(78, userKnockoutWinners) },
-    { duel: 92, datum: "6-7", tijd: "22:00", stadion: "Seattle", home: getWinnaarVanDuelVoorSpeler(79, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(80, userKnockoutWinners) },
-    { duel: 93, datum: "7-7", tijd: "18:00", stadion: "Boston", home: getWinnaarVanDuelVoorSpeler(81, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(82, userKnockoutWinners) },
-    { duel: 94, datum: "7-7", tijd: "22:00", stadion: "Dallas", home: getWinnaarVanDuelVoorSpeler(83, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(84, userKnockoutWinners) },
-    { duel: 95, datum: "8-7", tijd: "18:00", stadion: "Los Angeles", home: getWinnaarVanDuelVoorSpeler(85, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(86, userKnockoutWinners) },
-    { duel: 96, datum: "8-7", tijd: "22:00", stadion: "Mexico-Stad", home: getWinnaarVanDuelVoorSpeler(87, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(88, userKnockoutWinners) },
+    { duel: 90, datum: "4-7", tijd: "19:00", stadion: "Houston", home: getWinnaarVanDuelVoorSpeler(73, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(75, userKnockoutWinners) },
+    { duel: 89, datum: "4-7", tijd: "23:00", stadion: "Philadelphia", home: getWinnaarVanDuelVoorSpeler(74, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(77, userKnockoutWinners) },
+    { duel: 91, datum: "5-7", tijd: "22:00", stadion: "New York/New Jersey", home: getWinnaarVanDuelVoorSpeler(76, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(78, userKnockoutWinners) },
+    { duel: 92, datum: "6-7", tijd: "02:00", stadion: "Mexico-Stad", home: getWinnaarVanDuelVoorSpeler(79, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(80, userKnockoutWinners) },
+    { duel: 93, datum: "6-7", tijd: "21:00", stadion: "Dallas", home: getWinnaarVanDuelVoorSpeler(83, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(84, userKnockoutWinners) },
+    { duel: 94, datum: "7-7", tijd: "02:00", stadion: "Seattle", home: getWinnaarVanDuelVoorSpeler(81, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(82, userKnockoutWinners) },
+    { duel: 95, datum: "7-7", tijd: "18:00", stadion: "Atlanta", home: getWinnaarVanDuelVoorSpeler(86, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(88, userKnockoutWinners) },
+    { duel: 96, datum: "7-7", tijd: "22:00", stadion: "Vancouver", home: getWinnaarVanDuelVoorSpeler(85, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(87, userKnockoutWinners) },
   ]
 }
 const getLaatste32VoorSpeler = (
@@ -1561,33 +1563,33 @@ const getKwartfinale = () => {
   return [
     {
       duel: 97,
-      datum: "11-7",
-      tijd: "18:00",
-      stadion: "Miami",
+      datum: "9-7",
+      tijd: "22:00",
+      stadion: "Boston",
       home: getWinnaarVanDuel(89),
       away: getWinnaarVanDuel(90),
     },
     {
       duel: 98,
-      datum: "11-7",
-      tijd: "22:00",
-      stadion: "Kansas City",
-      home: getWinnaarVanDuel(91),
-      away: getWinnaarVanDuel(92),
-    },
-    {
-      duel: 99,
-      datum: "12-7",
-      tijd: "18:00",
-      stadion: "Vancouver",
+      datum: "10-7",
+      tijd: "21:00",
+      stadion: "Los Angeles",
       home: getWinnaarVanDuel(93),
       away: getWinnaarVanDuel(94),
     },
     {
+      duel: 99,
+      datum: "11-7",
+      tijd: "23:00",
+      stadion: "Miami",
+      home: getWinnaarVanDuel(91),
+      away: getWinnaarVanDuel(92),
+    },
+    {
       duel: 100,
       datum: "12-7",
-      tijd: "22:00",
-      stadion: "New York",
+      tijd: "03:00",
+      stadion: "Kansas City",
       home: getWinnaarVanDuel(95),
       away: getWinnaarVanDuel(96),
     },
@@ -1598,10 +1600,10 @@ const getKwartfinaleVoorSpeler = (
   userKnockoutWinners: Record<number, string>
 ) => {
   return [
-    { duel: 97, datum: "11-7", tijd: "18:00", stadion: "Miami", home: getWinnaarVanDuelVoorSpeler(89, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(90, userKnockoutWinners) },
-    { duel: 98, datum: "11-7", tijd: "22:00", stadion: "Kansas City", home: getWinnaarVanDuelVoorSpeler(91, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(92, userKnockoutWinners) },
-    { duel: 99, datum: "12-7", tijd: "18:00", stadion: "Vancouver", home: getWinnaarVanDuelVoorSpeler(93, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(94, userKnockoutWinners) },
-    { duel: 100, datum: "12-7", tijd: "22:00", stadion: "New York", home: getWinnaarVanDuelVoorSpeler(95, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(96, userKnockoutWinners) },
+    { duel: 97, datum: "9-7", tijd: "22:00", stadion: "Boston", home: getWinnaarVanDuelVoorSpeler(89, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(90, userKnockoutWinners) },
+    { duel: 98, datum: "10-7", tijd: "21:00", stadion: "Los Angeles", home: getWinnaarVanDuelVoorSpeler(93, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(94, userKnockoutWinners) },
+    { duel: 99, datum: "11-7", tijd: "23:00", stadion: "Miami", home: getWinnaarVanDuelVoorSpeler(91, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(92, userKnockoutWinners) },
+    { duel: 100, datum: "12-7", tijd: "03:00", stadion: "Kansas City", home: getWinnaarVanDuelVoorSpeler(95, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(96, userKnockoutWinners) },
   ]
 }
 
@@ -1609,7 +1611,7 @@ const getHalveFinale = () => {
   return [
     {
       duel: 101,
-      datum: "15-7",
+      datum: "14-7",
       tijd: "21:00",
       stadion: "Dallas",
       home: getWinnaarVanDuel(97),
@@ -1617,7 +1619,7 @@ const getHalveFinale = () => {
     },
     {
       duel: 102,
-      datum: "16-7",
+      datum: "15-7",
       tijd: "21:00",
       stadion: "Atlanta",
       home: getWinnaarVanDuel(99),
@@ -1630,8 +1632,8 @@ const getHalveFinaleVoorSpeler = (
   userKnockoutWinners: Record<number, string>
 ) => {
   return [
-    { duel: 101, datum: "15-7", tijd: "21:00", stadion: "Dallas", home: getWinnaarVanDuelVoorSpeler(97, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(98, userKnockoutWinners) },
-    { duel: 102, datum: "16-7", tijd: "21:00", stadion: "Atlanta", home: getWinnaarVanDuelVoorSpeler(99, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(100, userKnockoutWinners) },
+    { duel: 101, datum: "14-7", tijd: "21:00", stadion: "Dallas", home: getWinnaarVanDuelVoorSpeler(97, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(98, userKnockoutWinners) },
+    { duel: 102, datum: "15-7", tijd: "21:00", stadion: "Atlanta", home: getWinnaarVanDuelVoorSpeler(99, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(100, userKnockoutWinners) },
   ]
 }
 
@@ -1656,20 +1658,21 @@ const getTroostfinale = () => {
     {
       duel: 103,
       datum: "18-7",
-      tijd: "20:00",
+      tijd: "23:00",
       stadion: "Miami",
       home: getVerliezerVanHalveFinale(101),
       away: getVerliezerVanHalveFinale(102),
     },
   ]
 }
+
 const getFinale = () => {
   return [
     {
       duel: 104,
       datum: "19-7",
       tijd: "21:00",
-      stadion: "New York New Jersey",
+      stadion: "New York/New Jersey",
       home: getWinnaarVanDuel(101),
       away: getWinnaarVanDuel(102),
     },
@@ -1692,7 +1695,7 @@ const getTroostfinaleVoorSpeler = (
       : halveFinalesSpeler[1].home
 
   return [
-    { duel: 103, datum: "18-7", tijd: "20:00", stadion: "Miami", home: verliezer101 || null, away: verliezer102 || null },
+    { duel: 103, datum: "18-7", tijd: "23:00", stadion: "Miami", home: verliezer101 || null, away: verliezer102 || null },
   ]
 }
 
@@ -1700,7 +1703,7 @@ const getFinaleVoorSpeler = (
   userKnockoutWinners: Record<number, string>
 ) => {
   return [
-    { duel: 104, datum: "19-7", tijd: "21:00", stadion: "New York New Jersey", home: getWinnaarVanDuelVoorSpeler(101, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(102, userKnockoutWinners) },
+    { duel: 104, datum: "19-7", tijd: "21:00", stadion: "New York/New Jersey", home: getWinnaarVanDuelVoorSpeler(101, userKnockoutWinners), away: getWinnaarVanDuelVoorSpeler(102, userKnockoutWinners) },
   ]
 }
 
