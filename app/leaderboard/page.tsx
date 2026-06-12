@@ -449,13 +449,9 @@ const scores = predictions?.map((prediction) => {
           {leaderboard.map((speler, index) => (
   <button
     key={speler.user_email}
-    onClick={() =>
- router.push(
-  `/voorspellen?speler=${encodeURIComponent(
-    speler.username
-  )}`
-)
-}
+   onClick={() => {
+  alert(`Klik op ${speler.username}`)
+}}
     className="w-full grid grid-cols-[60px_1fr_80px] items-center px-5 py-4 border-b border-gray-800 last:border-b-0 hover:bg-gray-800/70 transition text-left"
   >
               <div className="font-bold text-orange-400">
