@@ -446,28 +446,45 @@ const scores = predictions?.map((prediction) => {
         </h1>
 
         <div className="bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800 rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.35)]">
-          {leaderboard.map((speler, index) => (
-  <button
-    key={speler.user_email}
-   onClick={() => {
-  window.location.href =
-    `/voorspellen?speler=${encodeURIComponent(speler.username)}`
-}}
-    className="w-full grid grid-cols-[60px_1fr_80px] items-center px-5 py-4 border-b border-gray-800 last:border-b-0 hover:bg-gray-800/70 transition text-left"
-  >
-              <div className="font-bold text-orange-400">
-                {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`}
-              </div>
+         {leaderboard.map((speler, index) => {
+  const rank =
+    index === 0
+      ? 1
+      : speler.punten === leaderboard[index - 1].punten
+      ? leaderboard.findIndex(
+          (s) => s.punten === speler.punten
+        ) + 1
+      : index + 1
 
-              <div className="truncate font-semibold">
-                {speler.username}
-              </div>
+  return (
+    <button
+      key={speler.user_email}
+      onClick={() => {
+        window.location.href =
+          `/voorspellen?speler=${encodeURIComponent(speler.username)}`
+      }}
+      className="w-full grid grid-cols-[60px_1fr_80px] items-center px-5 py-4 border-b border-gray-800 last:border-b-0 hover:bg-gray-800/70 transition"
+    >
+      <div className="font-bold text-orange-400">
+        {index === 0
+          ? "🥇"
+          : index === 1
+          ? "🥈"
+          : index === 2
+          ? "🥉"
+          : `#${rank}`}
+      </div>
 
-              <div className="text-right font-bold text-green-400">
-                {speler.punten} pt
-              </div>
-            </button>
-          ))}
+      <div className="truncate font-semibold">
+        {speler.username}
+      </div>
+
+      <div className="text-right font-bold text-green-400">
+        {speler.punten} pt
+      </div>
+    </button>
+  )
+})}
         </div>
       </div>
      

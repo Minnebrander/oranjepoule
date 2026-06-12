@@ -1972,8 +1972,18 @@ if (!heeftBetaald) {
       const end = Math.min(leaderboard.length, mijnIndex + 6)
 
       return leaderboard.slice(start, end).map((speler, index) => {
-        const echteIndex = start + index
-        const isMe = speler.naam === user
+const echteIndex = start + index
+
+const rank =
+  echteIndex === 0
+    ? 1
+    : speler.punten === leaderboard[echteIndex - 1].punten
+    ? leaderboard.findIndex(
+        (s) => s.punten === speler.punten
+      ) + 1
+    : echteIndex + 1
+
+const isMe = speler.naam === user
 
         return (
           <button
@@ -1987,7 +1997,7 @@ if (!heeftBetaald) {
           >
             <div className="flex items-center justify-between gap-4">
               <span className="truncate">
-                #{echteIndex + 1} {speler.naam}
+                #{rank} {speler.naam}
                 {isMe ? " jij" : ""}
               </span>
 
