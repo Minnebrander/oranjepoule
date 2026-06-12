@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 import { getBesteDerdeCombinatieKey, getDerdePouleVoorDuel } from "@/lib/ThirdPlaceMatrix"
-import { useState, useEffect, useMemo } from "react"
+import { Suspense, useState, useEffect, useMemo } from "react"
 import { poules, teamsPerPoule } from "@/lib/poules"
 import { useSearchParams } from "next/navigation"
 
@@ -113,7 +113,7 @@ const getWedstrijdKey = (pouleKey: string, index: number) => {
   return `${pouleKey}-${index}`
 }
 
-export default function VoorspellenPage() {
+function VoorspellenContent() {
 const [scores, setScores] = useState<{ [key: string]: { s1?: string; s2?: string } }>({})
 const [results, setResults] = useState<
   Record<string, { score1: number; score2: number }>
@@ -2740,5 +2740,12 @@ ${getVergelijkKleurPoule(pouleKey, team.land, index).bg}`}
   </div>
 )}
     </main>
+  )
+}
+export default function VoorspellenPage() {
+  return (
+    <Suspense fallback={<div>Laden...</div>}>
+      <VoorspellenContent />
+    </Suspense>
   )
 }
