@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { poules, teamsPerPoule } from "@/lib/poules"
 import { getBesteDerdeCombinatieKey, getDerdePouleVoorDuel } from "@/lib/ThirdPlaceMatrix"
+import PlayerPredictionModal from "../../components/PlayerPredictionModal"
 
 
 const extraKeys = [
@@ -416,7 +417,12 @@ const scores = predictions?.map((prediction) => {
     profileMap[prediction.user_email] ||
     prediction.user_email.split("@")[0] ||
     "Deelnemer",
+
   punten,
+
+  scores: prediction.scores || {},
+  knockout: prediction.knockout || {},
+  extra: prediction.extra || {},
 }
       }) || []
 
@@ -461,44 +467,17 @@ const scores = predictions?.map((prediction) => {
           ))}
         </div>
       </div>
-            {selectedSpeler && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4">
-          <div className="bg-gray-900 border border-gray-700 rounded-3xl p-5 w-[calc(100vw-2rem)] max-w-md max-h-[85vh] overflow-y-auto shadow-2xl">
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <div>
-                <p className="text-sm text-gray-400">
-                  Positie #{selectedSpeler.positie}
-                </p>
-
-                <h2 className="text-xl sm:text-2xl font-extrabold break-all leading-tight pr-2">
-  {selectedSpeler.username}
-</h2>
-              </div>
-
-              <button
-                onClick={() => setSelectedSpeler(null)}
-                className="text-gray-400 hover:text-white text-2xl leading-none"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="bg-gray-950 border border-gray-800 rounded-2xl p-4">
-              <p className="text-gray-400 text-sm mb-1">
-                Totaalscore
-              </p>
-
-              <p className="text-3xl font-black text-green-400">
-                {selectedSpeler.punten} pt
-              </p>
-            </div>
-
-            <p className="text-sm text-gray-500 mt-4">
-              Detailweergave volgt later.
-            </p>
-          </div>
-        </div>
-      )}
+       {selectedSpeler && (
+  <PlayerPredictionModal
+    speler={{
+      username: selectedSpeler.username,
+      scores: selectedSpeler.scores,
+      knockout: selectedSpeler.knockout,
+      extra: selectedSpeler.extra,
+    }}
+    onClose={() => setSelectedSpeler(null)}
+  />
+)}    
     </main>
   )
 }
