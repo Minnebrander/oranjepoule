@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { poules, teamsPerPoule } from "@/lib/poules"
 import { getBesteDerdeCombinatieKey, getDerdePouleVoorDuel } from "@/lib/ThirdPlaceMatrix"
-import PlayerPredictionModal from "../../components/PlayerPredictionModal"
+import { useRouter } from "next/navigation"
 
 
 const extraKeys = [
@@ -20,8 +20,8 @@ const extraKeys = [
 ]
 
 export default function LeaderboardPage() {
+  const router = useRouter()
   const [leaderboard, setLeaderboard] = useState<any[]>([])
-  const [selectedSpeler, setSelectedSpeler] = useState<any | null>(null)
 
   useEffect(() => {
     const loadLeaderboard = async () => {
@@ -449,7 +449,13 @@ const scores = predictions?.map((prediction) => {
           {leaderboard.map((speler, index) => (
   <button
     key={speler.user_email}
-    onClick={() => setSelectedSpeler({ ...speler, positie: index + 1 })}
+    onClick={() =>
+  router.push(
+    `/voorspellen?speler=${encodeURIComponent(
+      speler.user_email
+    )}`
+  )
+}
     className="w-full grid grid-cols-[60px_1fr_80px] items-center px-5 py-4 border-b border-gray-800 last:border-b-0 hover:bg-gray-800/70 transition text-left"
   >
               <div className="font-bold text-orange-400">
@@ -467,17 +473,8 @@ const scores = predictions?.map((prediction) => {
           ))}
         </div>
       </div>
-       {selectedSpeler && (
-  <PlayerPredictionModal
-    speler={{
-      username: selectedSpeler.username,
-      scores: selectedSpeler.scores,
-      knockout: selectedSpeler.knockout,
-      extra: selectedSpeler.extra,
-    }}
-    onClose={() => setSelectedSpeler(null)}
-  />
-)}    
+     
+    
     </main>
   )
 }

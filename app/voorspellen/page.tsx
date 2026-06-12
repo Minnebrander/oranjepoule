@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase"
 import { getBesteDerdeCombinatieKey, getDerdePouleVoorDuel } from "@/lib/ThirdPlaceMatrix"
 import { useState, useEffect, useMemo } from "react"
 import { poules, teamsPerPoule } from "@/lib/poules"
+import { useSearchParams } from "next/navigation"
 
 const voorspelDeadline = new Date("2026-06-11T21:00:00+02:00")
 
@@ -168,6 +169,9 @@ const [alleVoorspellingen, setAlleVoorspellingen] = useState<
   >
 >({})
 
+const searchParams = useSearchParams()
+const spelerParam = searchParams.get("speler")
+
 const [saving, setSaving] = useState(false)
 const [profielGeladen, setProfielGeladen] = useState(false)
 const [heeftBetaald, setHeeftBetaald] = useState(false)
@@ -176,7 +180,11 @@ const geselecteerdeVoorspelling = geselecteerdeSpeler
   : null
 
   const mijnVoorspelling = alleVoorspellingen[user]
+useEffect(() => {
+  if (!spelerParam) return
 
+  setGeselecteerdeSpeler(spelerParam)
+}, [spelerParam])
  useEffect(() => {
   const loadPredictions = async () => {
     const {
