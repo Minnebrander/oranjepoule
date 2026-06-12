@@ -450,11 +450,11 @@ const scores = predictions?.map((prediction) => {
   <button
     key={speler.user_email}
     onClick={() =>
-  router.push(
-    `/voorspellen?speler=${encodeURIComponent(
-      speler.user_email
-    )}`
-  )
+ router.push(
+  `/voorspellen?speler=${encodeURIComponent(
+    speler.username
+  )}`
+)
 }
     className="w-full grid grid-cols-[60px_1fr_80px] items-center px-5 py-4 border-b border-gray-800 last:border-b-0 hover:bg-gray-800/70 transition text-left"
   >
