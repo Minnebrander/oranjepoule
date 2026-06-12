@@ -450,7 +450,8 @@ const scores = predictions?.map((prediction) => {
   <button
     key={speler.user_email}
    onClick={() => {
-  alert(`Klik op ${speler.username}`)
+  window.location.href =
+    `/voorspellen?speler=${encodeURIComponent(speler.username)}`
 }}
     className="w-full grid grid-cols-[60px_1fr_80px] items-center px-5 py-4 border-b border-gray-800 last:border-b-0 hover:bg-gray-800/70 transition text-left"
   >
