@@ -123,14 +123,24 @@ setFinales(finaleRanking)
   }, [])
 
 const COLORS = [
-  "#f97316",
-  "#fb923c",
-  "#fdba74",
-  "#fed7aa",
-  "#60a5fa",
-  "#34d399",
-  "#a78bfa",
-  "#f472b6",
+  "#f97316", // oranje
+  "#fb923c", // licht oranje
+  "#fdba74", // zand
+  "#60a5fa", // blauw
+  "#34d399", // groen
+  "#a78bfa", // paars
+  "#f472b6", // roze
+  "#ef4444", // rood
+  "#eab308", // geel
+  "#06b6d4", // cyaan
+  "#84cc16", // lime
+  "#8b5cf6", // violet
+  "#ec4899", // pink
+  "#14b8a6", // teal
+  "#f43f5e", // rose
+  "#22c55e", // emerald
+  "#3b82f6", // helder blauw
+  "#d946ef", // magenta
 ]
 
  return (
