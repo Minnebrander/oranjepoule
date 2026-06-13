@@ -58,7 +58,12 @@ export default function RootLayout({
             >
               Uitleg
             </Link>
-
+<Link
+  href="/statistieken"
+  className="px-3 py-2 rounded-lg bg-blue-700 text-white text-sm font-semibold hover:bg-blue-600 transition"
+>
+  Statistieken
+</Link>
             {user ? (
               <div className="flex items-center gap-2">
                 <span className="hidden sm:inline text-gray-300 text-sm max-w-[220px] truncate">
