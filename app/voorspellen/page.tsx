@@ -516,42 +516,48 @@ const berekenPuntenVoorWedstrijd = (
   i: number
 ) => {
 
-  const key = getWedstrijdKey(pouleKey, i)
+const key = getWedstrijdKey(pouleKey, i)
 const voorspelling = scores[key]
-  if (!voorspelling) return 0
 
-if (w.score1 == null || w.score2 == null) return 0
+if (!voorspelling) return 0
 
-  const s1 = parseInt(voorspelling.s1 || "0")
-  const s2 = parseInt(voorspelling.s2 || "0")
+const result = results[key]
 
-  let punten = 0
+if (!result) return 0
 
-  const echte =
-    w.score1 > w.score2 ? "1" :
-    w.score1 < w.score2 ? "2" : "X"
+const echteS1 = result.score1
+const echteS2 = result.score2
 
-  const voorspeld =
-    s1 > s2 ? "1" :
-    s1 < s2 ? "2" : "X"
+const s1 = parseInt(voorspelling.s1 || "0")
+const s2 = parseInt(voorspelling.s2 || "0")
 
-  if (echte === voorspeld) {
-    punten += 4
-  }
+let punten = 0
 
-  if (s1 === w.score1) {
-    punten += 2
-  }
+const echte =
+  echteS1 > echteS2 ? "1" :
+  echteS1 < echteS2 ? "2" : "X"
 
-  if (s2 === w.score2) {
-    punten += 2
-  }
+const voorspeld =
+  s1 > s2 ? "1" :
+  s1 < s2 ? "2" : "X"
 
-  if (s1 === w.score1 && s2 === w.score2) {
-    punten += 2
-  }
+if (echte === voorspeld) {
+  punten += 4
+}
 
-  return punten
+if (s1 === echteS1) {
+  punten += 2
+}
+
+if (s2 === echteS2) {
+  punten += 2
+}
+
+if (s1 === echteS1 && s2 === echteS2) {
+  punten += 2
+}
+
+return punten
 }
 
 const berekenKnockoutPunten = () => {
