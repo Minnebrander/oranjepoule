@@ -2089,7 +2089,7 @@ const isMe = speler.naam === user
       <Flag land={w.team1} />
     </span>
 
-    <div className="flex flex-col items-center justify-center w-24">
+    <div className="flex flex-col items-center justify-center w-24 py-2">
 
   <div className="flex items-center gap-1">
   <input
