@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts"
 
+
 export default function StatistiekenPage() {
   const [wereldkampioenen, setWereldkampioenen] = useState<
     { land: string; aantal: number }[]
@@ -21,6 +22,11 @@ const [nederlandData, setNederlandData] = useState<
 const [finales, setFinales] = useState<
   { finale: string; aantal: number }[]
 >([])
+
+const [pouleFData, setPouleFData] = useState<
+  { land: string; aantal: number }[]
+>([])
+
   useEffect(() => {
     const load = async () => {
       const { data } = await supabase
@@ -37,7 +43,7 @@ const nederlandVerdeling: Record<string, number> = {
 }
 
 const finaleVerdeling: Record<string, number> = {}
-
+const pouleFVerdeling: Record<string, number> = {}
 data?.forEach((speler: any) => {
   // Wereldkampioen
   const kampioen = speler.knockout?.[104]
@@ -49,7 +55,7 @@ data?.forEach((speler: any) => {
 
   // Nederland
   const knockout = speler.knockout || {}
-
+const scores = speler.scores || {}
   if (knockout[104] === "Nederland") {
     nederlandVerdeling["Wereldkampioen"]++
   } else if (

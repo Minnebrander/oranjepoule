@@ -115,6 +115,9 @@ const getWedstrijdKey = (pouleKey: string, index: number) => {
 
 function VoorspellenContent() {
 const [scores, setScores] = useState<{ [key: string]: { s1?: string; s2?: string } }>({})
+const [echteResultaten, setEchteResultaten] = useState<
+  Record<string, { score1: string; score2: string }>
+>({})
 const [results, setResults] = useState<
   Record<string, { score1: number; score2: number }>
 >({})
@@ -268,6 +271,10 @@ useEffect(() => {
       .from("actuals")
       .select("key, value")
 
+const { data: resultsData } = await supabase
+  .from("results")
+  .select("*")
+
     if (error) {
       console.error("Actuals laden mislukt:", error.message)
       return
@@ -300,7 +307,19 @@ if (row.key.startsWith("stand-")) {
 }
 
     })
+const resultsMap: Record<
+  string,
+  { score1: string; score2: string }
+> = {}
 
+resultsData?.forEach((row) => {
+  resultsMap[row.match_id] = {
+    score1: row.score1?.toString() || "",
+    score2: row.score2?.toString() || "",
+  }
+})
+
+setEchteResultaten(resultsMap)
 setEchteExtraVoorspellingen(extraActuals)
 setEchtePouleStanden(echtePouleStandenData)
 setEchteKnockoutRondes(knockoutRondesData)
@@ -456,7 +475,7 @@ const savePredictionToSupabase = async (
 
   if (!user?.email) return
 
-  const { error } = await supabase
+  const { error } = updatedScores
     .from("predictions")
     .upsert(
       {
@@ -2038,6 +2057,7 @@ const isMe = speler.naam === user
           {wedstrijden.map((w, i) => {
             const key = getWedstrijdKey(pouleKey, i)
             const voorspelling = scores[key]
+            const echtResultaat = results[key]
 
             return (
               <div
@@ -2069,27 +2089,35 @@ const isMe = speler.naam === user
       <Flag land={w.team1} />
     </span>
 
-    <div className="flex items-center justify-center gap-1 w-24">
-      <input
-        value={voorspelling?.s1 || ""}
-        onChange={(e) =>
-          updateScore(key, "s1", e.target.value)
-        }
-        disabled={voorspellingenGesloten}
-        className="w-10 text-center bg-gray-700 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition disabled:opacity-60 disabled:cursor-not-allowed"
-      />
+    <div className="flex flex-col items-center justify-center w-24">
 
-      <span>-</span>
+  <div className="flex items-center gap-1">
+  <input
+    value={voorspelling?.s1 || ""}
+    onChange={(e) =>
+      updateScore(key, "s1", e.target.value)
+    }
+    disabled={voorspellingenGesloten}
+    className="w-10 text-center bg-gray-700 rounded border border-gray-600"
+  />
 
-      <input
-        value={voorspelling?.s2 || ""}
-        onChange={(e) =>
-          updateScore(key, "s2", e.target.value)
-        }
-        disabled={voorspellingenGesloten}
-        className="w-10 text-center bg-gray-700 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition disabled:opacity-60 disabled:cursor-not-allowed"
-      />
-    </div>
+  <span>-</span>
+
+  <input
+    value={voorspelling?.s2 || ""}
+    onChange={(e) =>
+      updateScore(key, "s2", e.target.value)
+    }
+    disabled={voorspellingenGesloten}
+    className="w-10 text-center bg-gray-700 rounded border border-gray-600"
+  />
+</div>
+{echtResultaat && (
+  <div className="text-[10px] text-green-400 opacity-80 mt-1">
+  ✓ {echtResultaat.score1}-{echtResultaat.score2}
+</div>
+)}
+</div>
 
     <span className="text-left pl-6 whitespace-nowrap w-36 flex items-center gap-2">
       <span>{w.team2}</span>
